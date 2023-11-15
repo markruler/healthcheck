@@ -12,7 +12,7 @@
 
 ```sh
 # chmod +x healthcheck.sh
-./healthcheck.sh https://curl.se
+./healthcheck.sh -u https://curl.se -r 3
 ```
 
 ## JavaScript
