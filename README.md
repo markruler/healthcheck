@@ -14,3 +14,11 @@
 # chmod +x healthcheck.sh
 ./healthcheck.sh https://curl.se
 ```
+
+## JavaScript
+
+```sh
+# chmod +x healthcheck.js
+# npm install --save=false yargs
+./healthcheck.js -u https://nodejs.org
+```
