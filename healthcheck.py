@@ -2,15 +2,20 @@
 
 import requests
 import json
+import time
 """_summary_
 python3 healthcheck.py --url https://www.python.org --retry 3
 """
+
 
 def healthcheck(
     url: str,
     retry: int,
 ):
-    for _ in range(retry):
+    for count in range(retry):
+        if count > 0:
+            time.sleep(3)
+
         response = requests.get(
             url=url,
             timeout=3,
@@ -36,14 +41,26 @@ def healthcheck(
                 continue
         except json.decoder.JSONDecodeError as e:
             print(e.__class__, e)
+            print(f"response.status_code: {response.status_code}")
             continue
 
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="Simple Healthcheck Tool")
-    parser.add_argument("--url", type=str, required=True, help="Target URL")
-    parser.add_argument("--retry", type=int, required=False, default=1, help="Retry count")
-    
+    parser.add_argument(
+        "-u", "--url",
+        type=str,
+        required=True,
+        help="Target URL"
+    )
+    parser.add_argument(
+        "-r", "--retry",
+        type=int,
+        required=False,
+        default=1,
+        help="Retry count"
+    )
+
     args = parser.parse_args()
     healthcheck(args.url, args.retry)
