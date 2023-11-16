@@ -8,6 +8,9 @@
 ./healthcheck.py -u https://www.python.org -r 3
 ```
 
+Jenkins 등의 CI 도구에서 console output을 실시간으로 확인하고 싶다면
+[PYTHONUNBUFFERED=x](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUNBUFFERED) 옵션을 추가한다.
+
 ## Shell Script
 
 ```sh
