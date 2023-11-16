@@ -26,7 +26,7 @@ def healthcheck(
         try:
             response = urllib2.urlopen(req, timeout=3)
         except (urllib2.HTTPError, urllib2.URLError) as ex:
-            print ex.__class__, ex.reason
+            print ex.__class__, ex
             check_retry_limit(count, retry)
             continue
 
