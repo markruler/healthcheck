@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 
 import urllib2
 import time
@@ -19,35 +20,40 @@ def healthcheck(
         }
     )
     for count in range(retry):
-        print "Healthchecking...", url
+        print "(%d/%d) Healthchecking... %s" % (count+1, retry, url)
         if count > 0:
-            time.sleep(5)
+            # 재시도 대기 3초
+            time.sleep(3)
 
         try:
+            # 요청 대기 3초
             response = urllib2.urlopen(req, timeout=3)
+            if response.code == 200:
+                # print dir(response)
+                # print response.read()
+                print "response.code:", response.code, response.msg
+                break
+            elif response.read() == 'OK':
+                print "response.read():", response.read()
+                break
+            else:
+                check_retry_limit(count, retry)
+                continue
         except (urllib2.HTTPError, urllib2.URLError) as ex:
+            print ex.__class__, ex.reason
+            continue
+        except Exception as ex:
+            # print dir(ex)
             print ex.__class__, ex
-            check_retry_limit(count, retry)
             continue
-
-        if response.code == 200:
-            # print dir(response)
-            # print response.read()
-            print "response.code:", response.code, response.msg
-            break
-        elif response.read() == 'OK':
-            print "response.read():", response.read()
-            break
-        else:
+        finally:
             check_retry_limit(count, retry)
-            continue
 
 
 def check_retry_limit(count, retry):
     if count == (retry - 1):
         print "Retry count exceeded"
         exit(1)
-    pass
 
 
 if __name__ == '__main__':
