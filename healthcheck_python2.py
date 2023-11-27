@@ -27,8 +27,12 @@ def healthcheck(
 
         try:
             # 요청 대기 3초
-            response = urllib2.urlopen(req, timeout=3)
-            if response.code == 200:
+            # response = urllib2.urlopen(req, timeout=3)
+            # <class 'urllib2.HTTPError'> The HTTP server returned a redirect error that would lead to an infinite loop.
+            # The last 30x error message was:
+            # HTTP Error 301: Moved Permanently -> HTTPCookieProcessor 추가
+            response = urllib2.build_opener(urllib2.HTTPCookieProcessor).open(req, timeout=3)
+            if response.code in [200]:
                 # print dir(response)
                 # print response.read()
                 print "response.code:", response.code, response.msg
@@ -39,7 +43,14 @@ def healthcheck(
             else:
                 check_retry_limit(count, retry)
                 continue
-        except (urllib2.HTTPError, urllib2.URLError) as ex:
+        except urllib2.HTTPError as ex:
+            # subclass of URLError
+            # https://docs.python.org/3/library/urllib.error.html
+            # print dir(ex)
+            print ex.__class__, ex
+            continue
+        except urllib2.URLError as ex:
+            # print dir(ex)
             print ex.__class__, ex.reason
             continue
         except Exception as ex:
