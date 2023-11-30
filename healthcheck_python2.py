@@ -12,7 +12,11 @@ python2 healthcheck_python2.py --url https://www.python.org --retry 3
 # socket.setdefaulttimeout(3)
 
 
-def open_healthcheck_(url):
+def healthcheck(
+    url,
+    retry,
+):
+
     req = urllib2.Request(
         url=url,
         headers={
@@ -20,8 +24,7 @@ def open_healthcheck_(url):
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36'
         }
     )
-    # 요청 대기 3초
-    # response = urllib2.urlopen(req, timeout=3)
+
     # <class 'urllib2.HTTPError'> The HTTP server returned a redirect error that would lead to an infinite loop.
     # The last 30x error message was:
     # HTTP Error 301: Moved Permanently -> HTTPCookieProcessor 추가
@@ -29,13 +32,7 @@ def open_healthcheck_(url):
     # HTTP Error 401: Unauthorized -> 별도의 healthcheck API를 사용하여 해결
     cookiejar = cookielib.CookieJar()
     cookie_processor = urllib2.HTTPCookieProcessor(cookiejar)
-    return urllib2.build_opener(cookie_processor).open(req, timeout=3)
 
-
-def healthcheck(
-    url,
-    retry,
-):
     for count in range(retry):
         print "(%d/%d) Healthchecking... %s" % (count+1, retry, url)
         if count > 0:
@@ -43,7 +40,10 @@ def healthcheck(
             time.sleep(3)
 
         try:
-            response = open_healthcheck_(url)
+            # 요청 대기 3초
+            # response = urllib2.urlopen(req, timeout=3)
+            opener = urllib2.build_opener(cookie_processor)
+            response = opener.open(req, timeout=3)
             if response.code in [200]:
                 # print dir(response)
                 # print response.read()
@@ -71,6 +71,7 @@ def healthcheck(
             continue
         finally:
             check_retry_limit(count, retry)
+            opener.close()
 
 
 def check_retry_limit(count, retry):
