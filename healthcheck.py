@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 
-import requests
 import json
 import time
+
+import requests
+
 """_summary_
 python3 healthcheck.py --url https://www.python.org --retry 3
 """
 
 
 def healthcheck(
-    url: str,
-    retry: int,
+        url: str,
+        retry: int,
 ):
     for count in range(retry):
-        print(f"({count+1}/{retry}) Healthchecking... {url}")
+        print(f"({count + 1}/{retry}) Healthchecking... {url}")
         if count > 0:
             # 재시도 대기 3초
             time.sleep(3)
@@ -32,7 +34,6 @@ def healthcheck(
 
             print(f"response.status_code: {response.status_code}")
             if response.status_code == 200:
-                print(f"response.status_code: {response.status_code}")
                 break
             elif response.text == 'OK':
                 print(f"response.text: {response.text}")
@@ -64,6 +65,7 @@ def check_retry_limit(count, retry):
 
 if __name__ == '__main__':
     import argparse
+
     parser = argparse.ArgumentParser(description="Simple Healthcheck Tool")
     parser.add_argument(
         "-u", "--url",

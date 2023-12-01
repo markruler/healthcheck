@@ -1,8 +1,10 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-import urllib2, cookielib
+import cookielib
 import time
+import urllib2
+
 # import socket
 """_summary_
 python2 healthcheck_python2.py --url https://www.python.org --retry 3
@@ -13,10 +15,9 @@ python2 healthcheck_python2.py --url https://www.python.org --retry 3
 
 
 def healthcheck(
-    url,
-    retry,
+        url,
+        retry,
 ):
-
     req = urllib2.Request(
         url=url,
         headers={
@@ -34,7 +35,7 @@ def healthcheck(
     cookie_processor = urllib2.HTTPCookieProcessor(cookiejar)
 
     for count in range(retry):
-        print "(%d/%d) Healthchecking... %s" % (count+1, retry, url)
+        print "(%d/%d) Healthchecking... %s" % (count + 1, retry, url)
         if count > 0:
             # 재시도 대기 3초
             time.sleep(3)
@@ -82,6 +83,7 @@ def check_retry_limit(count, retry):
 
 if __name__ == '__main__':
     import argparse
+
     parser = argparse.ArgumentParser(description="Simple Healthcheck Tool")
     parser.add_argument(
         "-u", "--url",
