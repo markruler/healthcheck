@@ -11,8 +11,8 @@ python3 healthcheck.py --url https://www.python.org --retry 3
 
 
 def healthcheck(
-        url: str,
-        retry: int,
+    url: str,
+    retry: int,
 ):
     for count in range(retry):
         print(f"({count + 1}/{retry}) Healthchecking... {url}")
@@ -32,7 +32,14 @@ def healthcheck(
                 },
             )
 
-            print(f"response.status_code: {response.status_code}")
+            # 리다이렉트 체인 확인
+            if response.history:
+                print(f"Redirect chain: {len(response.history)} redirect(s)")
+                for i, redirect in enumerate(response.history, 1):
+                    print(
+                        f"  [{i}] {redirect.status_code} -> {redirect.headers.get('Location', 'N/A')}")
+
+            print(f"Final response.status_code: {response.status_code}")
             if response.status_code == 200:
                 break
             elif response.text == 'OK':
